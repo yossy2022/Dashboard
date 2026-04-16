@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>タスク管理アプリ</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header>
+      <h1>タスク管理アプリ</h1>
+      <p>チケットを作成して、ドラッグ&amp;ドロップでステータスを移動できます。</p>
+    </header>
+
+    <section class="task-form-section">
+      <form id="task-form">
+        <div class="form-row">
+          <label for="task-title">タイトル</label>
+          <input id="task-title" type="text" placeholder="タイトルを入力" required />
+        </div>
+        <div class="form-row">
+          <label for="task-content">内容</label>
+          <textarea id="task-content" placeholder="内容を入力" required></textarea>
+        </div>
+        <div class="form-row">
+          <label for="task-status">ステータス</label>
+          <select id="task-status">
+            <option value="todo">ToDo</option>
+            <option value="inprogress">Inprogress</option>
+            <option value="done">Done</option>
+          </select>
+        </div>
+        <button type="submit">チケットを作成</button>
+      </form>
+    </section>
+
+    <section class="board-section">
+      <div class="column" data-status="todo">
+        <h2>ToDo</h2>
+        <div class="column-dropzone" id="todo-column"></div>
+      </div>
+      <div class="column" data-status="inprogress">
+        <h2>Inprogress</h2>
+        <div class="column-dropzone" id="inprogress-column"></div>
+      </div>
+      <div class="column" data-status="done">
+        <h2>Done</h2>
+        <div class="column-dropzone" id="done-column"></div>
+      </div>
+    </section>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
