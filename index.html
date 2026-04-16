@@ -31,6 +31,10 @@
             <option value="done">Done</option>
           </select>
         </div>
+        <div class="form-row">
+          <label for="task-url">参照URL（オプション）</label>
+          <input id="task-url" type="url" placeholder="https://example.com" />
+        </div>
         <button type="submit">チケットを作成</button>
       </form>
     </section>
@@ -49,6 +53,44 @@
         <div class="column-dropzone" id="done-column"></div>
       </div>
     </section>
+  </div>
+
+  <div id="edit-modal" class="modal hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>チケット編集</h2>
+        <button class="modal-close" id="modal-close">&times;</button>
+      </div>
+      <form id="edit-form">
+        <div class="form-row">
+          <label for="edit-title">タイトル</label>
+          <input id="edit-title" type="text" required />
+        </div>
+        <div class="form-row">
+          <label for="edit-content">内容</label>
+          <textarea id="edit-content" required></textarea>
+        </div>
+        <div class="form-row">
+          <label for="edit-status">ステータス</label>
+          <select id="edit-status">
+            <option value="todo">ToDo</option>
+            <option value="inprogress">Inprogress</option>
+            <option value="done">Done</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label for="edit-url">参照URL</label>
+          <input id="edit-url" type="url" />
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-secondary" id="edit-delete">削除</button>
+          <div class="modal-actions">
+            <button type="button" class="btn-secondary" id="edit-cancel">キャンセル</button>
+            <button type="submit" class="btn-primary">保存</button>
+          </div>
+        </div>
+      </form>
+    </div>
   </div>
 
   <script src="script.js"></script>

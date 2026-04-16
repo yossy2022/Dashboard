@@ -2,6 +2,7 @@ const taskForm = document.getElementById('task-form');
 const titleInput = document.getElementById('task-title');
 const contentInput = document.getElementById('task-content');
 const statusInput = document.getElementById('task-status');
+const urlInput = document.getElementById('task-url');
 const columns = {
   todo: document.getElementById('todo-column'),
   inprogress: document.getElementById('inprogress-column'),
@@ -10,6 +11,7 @@ const columns = {
 
 let tasks = [];
 let dragSourceId = null;
+let editingTaskId = null;
 
 function saveTasks() {
   localStorage.setItem('dashboardTasks', JSON.stringify(tasks));
@@ -48,10 +50,22 @@ function createTicketElement(task) {
   meta.appendChild(statusLabel);
   ticket.appendChild(title);
   ticket.appendChild(content);
+
+  if (task.url && task.url.trim()) {
+    const urlLink = document.createElement('a');
+    urlLink.className = 'ticket-url';
+    urlLink.href = task.url;
+    urlLink.target = '_blank';
+    urlLink.rel = 'noopener noreferrer';
+    urlLink.textContent = '🔗 参照を開く';
+    ticket.appendChild(urlLink);
+  }
+
   ticket.appendChild(meta);
 
   ticket.addEventListener('dragstart', handleDragStart);
   ticket.addEventListener('dragend', handleDragEnd);
+  ticket.addEventListener('click', () => openEditModal(task.id));
 
   return ticket;
 }
@@ -76,6 +90,33 @@ function updateTaskStatus(id, newStatus) {
   task.status = newStatus;
   saveTasks();
   renderTasks();
+}
+
+function openEditModal(taskId) {
+  const task = tasks.find(item => item.id === taskId);
+  if (!task) return;
+  
+  editingTaskId = taskId;
+  document.getElementById('edit-title').value = task.title;
+  document.getElementById('edit-content').value = task.content;
+  document.getElementById('edit-status').value = task.status;
+  document.getElementById('edit-url').value = task.url || '';
+  
+  document.getElementById('edit-modal').classList.remove('hidden');
+}
+
+function closeEditModal() {
+  document.getElementById('edit-modal').classList.add('hidden');
+  editingTaskId = null;
+}
+
+function deleteTask(taskId) {
+  if (confirm('本当に削除しますか？')) {
+    tasks = tasks.filter(item => item.id !== taskId);
+    saveTasks();
+    renderTasks();
+    closeEditModal();
+  }
 }
 
 function handleDragStart(event) {
@@ -121,6 +162,7 @@ taskForm.addEventListener('submit', event => {
   const title = titleInput.value.trim();
   const content = contentInput.value.trim();
   const status = statusInput.value;
+  const url = urlInput.value.trim();
 
   if (!title || !content) return;
 
@@ -129,11 +171,44 @@ taskForm.addEventListener('submit', event => {
     title,
     content,
     status,
+    url,
   };
 
   addTask(newTask);
   taskForm.reset();
   statusInput.value = 'todo';
+});
+
+const editModal = document.getElementById('edit-modal');
+const editForm = document.getElementById('edit-form');
+const modalClose = document.getElementById('modal-close');
+const editCancel = document.getElementById('edit-cancel');
+const editDelete = document.getElementById('edit-delete');
+
+modalClose.addEventListener('click', closeEditModal);
+editCancel.addEventListener('click', closeEditModal);
+editDelete.addEventListener('click', () => deleteTask(editingTaskId));
+
+editForm.addEventListener('submit', event => {
+  event.preventDefault();
+  
+  const task = tasks.find(item => item.id === editingTaskId);
+  if (!task) return;
+  
+  task.title = document.getElementById('edit-title').value.trim();
+  task.content = document.getElementById('edit-content').value.trim();
+  task.status = document.getElementById('edit-status').value;
+  task.url = document.getElementById('edit-url').value.trim();
+  
+  saveTasks();
+  renderTasks();
+  closeEditModal();
+});
+
+editModal.addEventListener('click', event => {
+  if (event.target === editModal) {
+    closeEditModal();
+  }
 });
 
 loadTasks();
